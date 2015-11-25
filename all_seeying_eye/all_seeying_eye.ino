@@ -13,7 +13,7 @@
 Servo myservo;  // create servo object to control a servo
 int pos = 0;    // variable to store the servo position
 int servoPin = 9;
-int maxServoDegrees = 150;
+int maxServoDegrees = 180;
 int minServoDegrees = 10;
 
 // PIR 
@@ -49,6 +49,8 @@ void setup() {
 
   myservo.write(maxServoDegrees);
   delay(1000);
+  myservo.write(maxServoDegrees - 50);
+  delay(300);
 }
 
 void moveEyeDown() {
@@ -57,10 +59,11 @@ void moveEyeDown() {
       myservo.write(pos);              // tell servo to go to position in variable 'pos'
       delay(15);                       // waits 15ms for the servo to reach the position
     }
+    myservo.write(maxServoDegrees - 50);
+    delay(300);
 }
 
 void moveEyeUp() {
-    // goes from 180 degrees to 0 degrees
     for (pos = maxServoDegrees; pos >= minServoDegrees; pos -= 1) { 
       myservo.write(pos);              // tell servo to go to position in variable 'pos'
       delay(15);                       // waits 15ms for the servo to reach the position
