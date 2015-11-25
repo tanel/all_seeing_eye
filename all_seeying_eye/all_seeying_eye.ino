@@ -13,6 +13,8 @@
 Servo myservo;  // create servo object to control a servo
 int pos = 0;    // variable to store the servo position
 int servoPin = 9;
+int maxServoDegrees = 150;
+int minServoDegrees = 10;
 
 // PIR 
 int inputPin = 2;               // choose the input pin (for PIR sensor)
@@ -44,10 +46,62 @@ void setup() {
   pinMode(led4, OUTPUT);
  
   Serial.begin(9600);  
+
+  myservo.write(maxServoDegrees);
+  delay(1000);
+}
+
+void moveEyeDown() {
+    for (pos = minServoDegrees; pos <= maxServoDegrees; pos += 1) { 
+      // in steps of 1 degree
+      myservo.write(pos);              // tell servo to go to position in variable 'pos'
+      delay(15);                       // waits 15ms for the servo to reach the position
+    }
+}
+
+void moveEyeUp() {
+    // goes from 180 degrees to 0 degrees
+    for (pos = maxServoDegrees; pos >= minServoDegrees; pos -= 1) { 
+      myservo.write(pos);              // tell servo to go to position in variable 'pos'
+      delay(15);                       // waits 15ms for the servo to reach the position
+    }
+}
+
+void fadeLedIn() {
+  while (brightness < maxBrightness) {
+    analogWrite(led1, brightness);
+    analogWrite(led2, brightness);
+    analogWrite(led3, brightness);
+    analogWrite(led4, brightness);
+    
+    // change the brightness for next time through the loop:
+    brightness = brightness + fadeAmount;
+
+    // wait for 30 milliseconds to see the dimming effect
+    delay(30);
+  }
+}
+
+void fadeLedOut() {
+  // Fade LED out
+  if (brightness > maxBrightness) {
+    brightness = maxBrightness;
+  }
+  while (brightness > 0) {
+    analogWrite(led1, brightness);
+    analogWrite(led2, brightness);
+    analogWrite(led3, brightness);
+    analogWrite(led4, brightness);
+    
+    // change the brightness for next time through the loop:
+    brightness = brightness - fadeAmount;
+
+    // wait for 30 milliseconds to see the dimming effect
+    delay(30);
+  }
 }
 
 void loop() {
-
   // if last show was more than n seconds ago (
   // or there hasnt been a show yet, check if we can
   // start one.
@@ -57,29 +111,11 @@ void loop() {
     if (pirState == LOW) {
       int secondsSince = (millis() - finishedAt) / 1000;
       if (secondsSince > 5 || !finishedAt) {
-        // goes from 180 degrees to 0 degrees
         Serial.println("Starting");
-        for (pos = 180; pos >= 0; pos -= 1) { 
-          myservo.write(pos);              // tell servo to go to position in variable 'pos'
-          delay(15);                       // waits 15ms for the servo to reach the position
-        }
+ 
+        moveEyeUp();
 
-        Serial.println("Started");
-
-        // Fade LED in
-        while (brightness < maxBrightness) {
-          analogWrite(led1, brightness);
-          analogWrite(led2, brightness);
-          analogWrite(led3, brightness);
-          analogWrite(led4, brightness);
-          
-          // change the brightness for next time through the loop:
-          brightness = brightness + fadeAmount;
-      
-          // wait for 30 milliseconds to see the dimming effect
-          delay(30);
-
-        }
+        fadeLedIn();
         
         // We only want to print on the output change, not state
         pirState = HIGH;
@@ -94,32 +130,12 @@ void loop() {
   if (pirState == HIGH && startedAt) {
     int secondsSince = (millis() - startedAt) / 1000;
     if (secondsSince > 5) {
-      // Fade LED out
-      if (brightness > maxBrightness) {
-        brightness = maxBrightness;
-      }
-      while (brightness > 0) {
-        analogWrite(led1, brightness);
-        analogWrite(led2, brightness);
-        analogWrite(led3, brightness);
-        analogWrite(led4, brightness);
-        
-        // change the brightness for next time through the loop:
-        brightness = brightness - fadeAmount;
-    
-        // wait for 30 milliseconds to see the dimming effect
-        delay(30);
-      }
-
-      // servo goes from 0 degrees to 180 degrees
       Serial.println("Stopping");
-      for (pos = 0; pos <= 180; pos += 1) { 
-        // in steps of 1 degree
-        myservo.write(pos);              // tell servo to go to position in variable 'pos'
-        delay(15);                       // waits 15ms for the servo to reach the position
-      }
-      Serial.println("Stopped");
-    
+
+      fadeLedOut();
+
+      moveEyeDown();
+
       // We only want to print on the output change, not state
       pirState = LOW;
 
