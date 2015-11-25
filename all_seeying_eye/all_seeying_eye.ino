@@ -57,14 +57,14 @@ void loop() {
     if (pirState == LOW) {
       int secondsSince = (millis() - finishedAt) / 1000;
       if (secondsSince > 5 || !finishedAt) {
-        // we have just turned on
-        Serial.println("Starting!");
-
         // goes from 180 degrees to 0 degrees
+        Serial.println("Starting");
         for (pos = 180; pos >= 0; pos -= 1) { 
           myservo.write(pos);              // tell servo to go to position in variable 'pos'
           delay(15);                       // waits 15ms for the servo to reach the position
         }
+
+        Serial.println("Started");
 
         // Fade LED in
         while (brightness < maxBrightness) {
@@ -94,8 +94,6 @@ void loop() {
   if (pirState == HIGH && startedAt) {
     int secondsSince = (millis() - startedAt) / 1000;
     if (secondsSince > 5) {
-      Serial.println("Finishing!");
-
       // Fade LED out
       if (brightness > maxBrightness) {
         brightness = maxBrightness;
@@ -114,11 +112,13 @@ void loop() {
       }
 
       // servo goes from 0 degrees to 180 degrees
+      Serial.println("Stopping");
       for (pos = 0; pos <= 180; pos += 1) { 
         // in steps of 1 degree
         myservo.write(pos);              // tell servo to go to position in variable 'pos'
         delay(15);                       // waits 15ms for the servo to reach the position
       }
+      Serial.println("Stopped");
     
       // We only want to print on the output change, not state
       pirState = LOW;
