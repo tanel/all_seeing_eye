@@ -25,6 +25,7 @@ int finishedAt = 0;
 int led1 = 6;
 int led2 = 5;
 int led3 = 3;
+int led4 = 11;
 int brightness = 0;    // how bright the LED is
 int fadeAmount = 2;    // how many points to fade the LED by
 int maxBrightness = 255;
@@ -40,6 +41,7 @@ void setup() {
   pinMode(led1, OUTPUT);
   pinMode(led2, OUTPUT);
   pinMode(led3, OUTPUT);
+  pinMode(led4, OUTPUT);
  
   Serial.begin(9600);  
 }
@@ -69,6 +71,7 @@ void loop() {
           analogWrite(led1, brightness);
           analogWrite(led2, brightness);
           analogWrite(led3, brightness);
+          analogWrite(led4, brightness);
           
           // change the brightness for next time through the loop:
           brightness = brightness + fadeAmount;
@@ -101,6 +104,7 @@ void loop() {
         analogWrite(led1, brightness);
         analogWrite(led2, brightness);
         analogWrite(led3, brightness);
+        analogWrite(led4, brightness);
         
         // change the brightness for next time through the loop:
         brightness = brightness - fadeAmount;
