@@ -1,26 +1,20 @@
-/* Sweep
- by BARRAGAN <http://barraganstudio.com>
- This example code is in the public domain.
 
- modified 8 Nov 2013
- by Scott Fitzgerald
- http://www.arduino.cc/en/Tutorial/Sweep
-*/
+#include "ApplicationMonitor.h"
 
 // servo
 #include <Servo.h>
-
-Servo myservo;  // create servo object to control a servo
-int pos = 0;    // variable to store the servo position
+Servo myservo;
+int pos = 0;
 int servoPin = 9;
 int maxServoDegrees = 180;
 int minServoDegrees = 10;
+int stepBack = 20;
 
 // PIR 
-int inputPin = 2;               // choose the input pin (for PIR sensor)
-int pirState = LOW;             // we start, assuming no motion detected
-int val = 0;                    // variable for reading the pin status
-int startedAt = 0;
+int inputPin = 2;
+int eyeState = LOW;
+int val = 0;
+int lastMotionAt = 0;
 int finishedAt = 0;
 
 // LED
@@ -28,9 +22,12 @@ int led1 = 6;
 int led2 = 5;
 int led3 = 3;
 int led4 = 11;
-int brightness = 0;    // how bright the LED is
-int fadeAmount = 2;    // how many points to fade the LED by
+int brightness = 0;
+int fadeAmount = 2;
 int maxBrightness = 255;
+
+// Are we debugging? Dont leave it enabled
+int debugging = 0;
 
 void setup() {
   // servo
@@ -44,13 +41,21 @@ void setup() {
   pinMode(led2, OUTPUT);
   pinMode(led3, OUTPUT);
   pinMode(led4, OUTPUT);
- 
-  Serial.begin(9600);  
+
+  if (debugging) {
+    Serial.begin(9600);
+  }
 
   myservo.write(maxServoDegrees);
   delay(1000);
-  myservo.write(maxServoDegrees - 50);
+  myservo.write(maxServoDegrees - stepBack);
   delay(300);
+}
+
+void debug(String text) { 
+  if (debugging) {
+    Serial.println(text);
+  }
 }
 
 void moveEyeDown() {
@@ -59,8 +64,10 @@ void moveEyeDown() {
       myservo.write(pos);              // tell servo to go to position in variable 'pos'
       delay(15);                       // waits 15ms for the servo to reach the position
     }
-    myservo.write(maxServoDegrees - 50);
+    myservo.write(maxServoDegrees - stepBack);
     delay(300);
+
+    eyeState = LOW;
 }
 
 void moveEyeUp() {
@@ -68,6 +75,10 @@ void moveEyeUp() {
       myservo.write(pos);              // tell servo to go to position in variable 'pos'
       delay(15);                       // waits 15ms for the servo to reach the position
     }
+    myservo.write(minServoDegrees + stepBack);
+    delay(300);
+
+    eyeState = HIGH;
 }
 
 void fadeLedIn() {
@@ -105,45 +116,21 @@ void fadeLedOut() {
 }
 
 void loop() {
-  // if last show was more than n seconds ago (
-  // or there hasnt been a show yet, check if we can
-  // start one.
-  // read PIR
-  val = digitalRead(inputPin);  // read input value
-  if (val == HIGH) {            // check if the input is HIGH
-    if (pirState == LOW) {
-      int secondsSince = (millis() - finishedAt) / 1000;
-      if (secondsSince > 5 || !finishedAt) {
-        Serial.println("Starting");
- 
-        moveEyeUp();
-
-        fadeLedIn();
-        
-        // We only want to print on the output change, not state
-        pirState = HIGH;
-  
-        startedAt = millis();
-      }
+  val = digitalRead(inputPin);
+  if (HIGH == val) {
+    lastMotionAt = millis();
+    if (LOW == eyeState) {
+      debug("Starting");
+      moveEyeUp();
+      fadeLedIn();
     }
-  }
-
-  // if n seconds have passed since last motion detection,
-  // turn it off now
-  if (pirState == HIGH && startedAt) {
-    int secondsSince = (millis() - startedAt) / 1000;
+  } else if (LOW == val && HIGH == eyeState) {
+    int secondsSince = (millis() - lastMotionAt) / 1000;
     if (secondsSince > 5) {
-      Serial.println("Stopping");
-
+      debug("Stopping");
       fadeLedOut();
-
       moveEyeDown();
-
-      // We only want to print on the output change, not state
-      pirState = LOW;
-
       finishedAt = millis();
     }
   }
-
 }
