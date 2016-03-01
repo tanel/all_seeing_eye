@@ -120,7 +120,7 @@ void loop() {
     // visitor to be able to leave the premise,
     // before the show starts again.
     int secondsSince = (millis() - finishedAt) / 1000;
-    if (secondsSince < 60) {
+    if (finishedAt > 0 && secondsSince < 60) {
       return;
     }
     lastMotionAt = millis();
