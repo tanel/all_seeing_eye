@@ -31,10 +31,10 @@ int debugging = 0;
 
 void setup() {
   // servo
-  myservo.attach(servoPin);  // attaches the servo on pin 9 to the servo object
+  myservo.attach(servoPin);
 
   // PIR
-  pinMode(inputPin, INPUT);     // declare sensor as input
+  pinMode(inputPin, INPUT);
 
   // LED
   pinMode(led1, OUTPUT);
@@ -61,8 +61,8 @@ void debug(String text) {
 void moveEyeDown() {
     for (pos = minServoDegrees; pos <= maxServoDegrees; pos += 1) { 
       // in steps of 1 degree
-      myservo.write(pos);              // tell servo to go to position in variable 'pos'
-      delay(15);                       // waits 15ms for the servo to reach the position
+      myservo.write(pos);
+      delay(15);
     }
     myservo.write(maxServoDegrees - stepBack);
     delay(300);
@@ -72,8 +72,8 @@ void moveEyeDown() {
 
 void moveEyeUp() {
     for (pos = maxServoDegrees; pos >= minServoDegrees; pos -= 1) { 
-      myservo.write(pos);              // tell servo to go to position in variable 'pos'
-      delay(15);                       // waits 15ms for the servo to reach the position
+      myservo.write(pos);
+      delay(15);
     }
     myservo.write(minServoDegrees + stepBack);
     delay(300);
@@ -88,10 +88,8 @@ void fadeLedIn() {
     analogWrite(led3, brightness);
     analogWrite(led4, brightness);
     
-    // change the brightness for next time through the loop:
     brightness = brightness + fadeAmount;
 
-    // wait for 30 milliseconds to see the dimming effect
     delay(30);
   }
 }
@@ -101,16 +99,15 @@ void fadeLedOut() {
   if (brightness > maxBrightness) {
     brightness = maxBrightness;
   }
+
   while (brightness > 0) {
     analogWrite(led1, brightness);
     analogWrite(led2, brightness);
     analogWrite(led3, brightness);
     analogWrite(led4, brightness);
     
-    // change the brightness for next time through the loop:
     brightness = brightness - fadeAmount;
 
-    // wait for 30 milliseconds to see the dimming effect
     delay(30);
   }
 }
