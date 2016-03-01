@@ -1,6 +1,4 @@
 
-#include "ApplicationMonitor.h"
-
 // servo
 #include <Servo.h>
 Servo myservo;
