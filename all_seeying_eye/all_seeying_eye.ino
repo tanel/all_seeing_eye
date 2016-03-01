@@ -111,8 +111,18 @@ void fadeLedOut() {
 }
 
 void loop() {
+  delay(100);
+
   val = digitalRead(inputPin);
   if (HIGH == val) {
+    // If last show was less than N seconds ago,
+    // Ignore the movement for now. We want the
+    // visitor to be able to leave the premise,
+    // before the show starts again.
+    int secondsSince = (millis() - finishedAt) / 1000;
+    if (secondsSince < 60) {
+      return;
+    }
     lastMotionAt = millis();
     if (LOW == eyeState) {
       debug("Starting");
@@ -128,6 +138,4 @@ void loop() {
       finishedAt = millis();
     }
   }
-
-  delay(100);
 }
