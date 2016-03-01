@@ -128,4 +128,6 @@ void loop() {
       finishedAt = millis();
     }
   }
+
+  delay(100);
 }
