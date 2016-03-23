@@ -108,6 +108,11 @@ void fadeLedOut() {
 
     delay(30);
   }
+
+  analogWrite(led1, 0);
+  analogWrite(led2, 0);
+  analogWrite(led3, 0);
+  analogWrite(led4, 0);
 }
 
 void loop() {
