@@ -12,8 +12,8 @@ int stepBack = 20;
 int PIR1 = 2;
 int PIR2 = 4;
 int eyeState = LOW;
-int lastMotionAt = 0;
-int finishedAt = 0;
+unsigned long lastMotionAt = 0;
+unsigned long finishedAt = 0;
 
 // LED
 int led1 = 6;
@@ -179,7 +179,10 @@ void loop() {
       moveEyeUp();
       fadeLedIn();
     }
-  } else if (LOW == val && HIGH == eyeState) {
+    return;
+  }
+    
+  if (LOW == val && HIGH == eyeState) {
     int secondsSince = (millis() - lastMotionAt) / 1000;
     if (secondsSince > 5) {
       debug("Stopping");
