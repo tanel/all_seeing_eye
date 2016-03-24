@@ -190,7 +190,7 @@ void loop() {
       moveEyeDown();
       finishedAt = millis();
       char buf[100];
-      sprintf(buf, "finished at %d", finishedAt);
+      sprintf(buf, "finished at %lu", finishedAt);
       debug(buf);
     }
   }
