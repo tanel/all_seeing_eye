@@ -9,9 +9,9 @@ int minServoDegrees = 10;
 int stepBack = 20;
 
 // PIR 
-int inputPin = 2;
+int PIR1 = 2;
+int PIR2 = 4;
 int eyeState = LOW;
-int val = 0;
 int lastMotionAt = 0;
 int finishedAt = 0;
 
@@ -49,7 +49,8 @@ void setup() {
   myservo.attach(servoPin);
 
   // PIR
-  pinMode(inputPin, INPUT);
+  pinMode(PIR1, INPUT);
+  pinMode(PIR2, INPUT);
 
   // LED
   pinMode(led1, OUTPUT);
@@ -153,7 +154,13 @@ void fadeLedOut() {
 void loop() {
   delay(100);
 
-  val = digitalRead(inputPin);
+  int val1 = digitalRead(PIR1);
+  int val2 = digitalRead(PIR2);
+  int val = LOW;
+  if (HIGH == val1 || HIGH == val2) {
+    val = HIGH;
+  }
+
   if (HIGH == val) {
     // If last show was less than N seconds ago,
     // Ignore the movement for now. We want the
