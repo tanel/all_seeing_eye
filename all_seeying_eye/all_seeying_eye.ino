@@ -24,10 +24,27 @@ int brightness = 0;
 int fadeAmount = 2;
 int maxBrightness = 255;
 
+// Relays
+int RELAY4 = 12;
+int RELAY3 = 7;
+int RELAY2 = 10;
+int RELAY1 = 8;
+int relayPause = 500;
+
 // Are we debugging? Dont leave it enabled
-int debugging = 0;
+int debugging = 1;
 
 void setup() {
+  // Turn lights via relay on
+  pinMode(RELAY1, OUTPUT);
+  pinMode(RELAY2, OUTPUT);
+  pinMode(RELAY3, OUTPUT);
+  pinMode(RELAY4, OUTPUT);
+  digitalWrite(RELAY1, LOW);
+  digitalWrite(RELAY2, LOW);
+  digitalWrite(RELAY3, LOW);
+  digitalWrite(RELAY4, LOW);
+  
   // servo
   myservo.attach(servoPin);
 
@@ -66,9 +83,27 @@ void moveEyeDown() {
     delay(300);
 
     eyeState = LOW;
+
+    // Turn lights via relay on
+    digitalWrite(RELAY1, LOW);
+    delay(relayPause);
+    digitalWrite(RELAY2, LOW);
+    delay(relayPause);
+    digitalWrite(RELAY3, LOW);
+    delay(relayPause);
+    digitalWrite(RELAY4, LOW);
 }
 
 void moveEyeUp() {
+    // Turn lights via relay off
+    digitalWrite(RELAY1, HIGH);
+    delay(relayPause);
+    digitalWrite(RELAY2, HIGH);
+    delay(relayPause);
+    digitalWrite(RELAY3, HIGH);
+    delay(relayPause);
+    digitalWrite(RELAY4, HIGH);
+  
     for (pos = maxServoDegrees; pos >= minServoDegrees; pos -= 1) { 
       myservo.write(pos);
       delay(15);
@@ -130,6 +165,9 @@ void loop() {
     }
     lastMotionAt = millis();
     if (LOW == eyeState) {
+      char buf[30];
+      sprintf(buf, "%d seconds since last finish", secondsSince);
+      debug(buf);
       debug("Starting");
       moveEyeUp();
       fadeLedIn();
@@ -141,6 +179,9 @@ void loop() {
       fadeLedOut();
       moveEyeDown();
       finishedAt = millis();
+      char buf[100];
+      sprintf(buf, "finished at %d", finishedAt);
+      debug(buf);
     }
   }
 }
