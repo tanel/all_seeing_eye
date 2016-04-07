@@ -45,9 +45,6 @@ void setup() {
   digitalWrite(RELAY3, LOW);
   digitalWrite(RELAY4, LOW);
   
-  // servo
-  myservo.attach(servoPin);
-
   // PIR
   pinMode(PIR1, INPUT);
   pinMode(PIR2, INPUT);
@@ -75,6 +72,8 @@ void debug(String text) {
 }
 
 void moveEyeDown() {
+    myservo.attach(servoPin);
+
     for (pos = minServoDegrees; pos <= maxServoDegrees; pos += 1) { 
       // in steps of 1 degree
       myservo.write(pos);
@@ -82,6 +81,8 @@ void moveEyeDown() {
     }
     myservo.write(maxServoDegrees - stepBack);
     delay(300);
+
+    myservo.detach();
 
     eyeState = LOW;
 
@@ -104,6 +105,8 @@ void moveEyeUp() {
     digitalWrite(RELAY3, HIGH);
     delay(relayPause);
     digitalWrite(RELAY4, HIGH);
+
+    myservo.attach(servoPin);
   
     for (pos = maxServoDegrees; pos >= minServoDegrees; pos -= 1) { 
       myservo.write(pos);
@@ -111,6 +114,8 @@ void moveEyeUp() {
     }
     myservo.write(minServoDegrees + stepBack);
     delay(300);
+
+    myservo.detach();
 
     eyeState = HIGH;
 }
