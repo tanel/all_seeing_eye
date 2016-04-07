@@ -34,7 +34,7 @@ int relayPause = 500;
 // Are we debugging? Dont leave it enabled
 int debugging = 0;
 
-int delayAroundEyeMovement = 3000;
+int delayAroundEyeMovement = 6000;
 
 void setup() {
   // Turn lights via relay on
