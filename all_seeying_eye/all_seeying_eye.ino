@@ -32,7 +32,9 @@ int RELAY1 = 8;
 int relayPause = 500;
 
 // Are we debugging? Dont leave it enabled
-int debugging = 1;
+int debugging = 0;
+
+int delayAroundEyeMovement = 3000;
 
 void setup() {
   // Turn lights via relay on
@@ -86,6 +88,8 @@ void moveEyeDown() {
 
     eyeState = LOW;
 
+    delay(delayAroundEyeMovement);
+
     // Turn lights via relay on
     digitalWrite(RELAY1, LOW);
     delay(relayPause);
@@ -105,6 +109,8 @@ void moveEyeUp() {
     digitalWrite(RELAY3, HIGH);
     delay(relayPause);
     digitalWrite(RELAY4, HIGH);
+
+    delay(delayAroundEyeMovement);
 
     myservo.attach(servoPin);
   
