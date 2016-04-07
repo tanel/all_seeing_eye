@@ -5,8 +5,8 @@ Servo myservo;
 int pos = 0;
 int servoPin = 9;
 int maxServoDegrees = 180;
-int minServoDegrees = 10;
-int stepBack = 20;
+int minServoDegrees = 0;
+int stepBack = 0;
 
 // PIR 
 int PIR1 = 2;
