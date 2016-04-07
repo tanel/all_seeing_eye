@@ -61,10 +61,13 @@ void setup() {
     Serial.begin(9600);
   }
 
+  // Set up servo
+  myservo.attach(servoPin);
   myservo.write(maxServoDegrees);
   delay(1000);
   myservo.write(maxServoDegrees - stepBack);
   delay(300);
+  myservo.detach();
 }
 
 void debug(String text) { 
