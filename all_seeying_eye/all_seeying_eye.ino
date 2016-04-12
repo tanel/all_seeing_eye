@@ -1,4 +1,14 @@
 
+// Read here on how to connect Master/Slave:
+// 
+// https://www.arduino.cc/en/Tutorial/MasterWriter
+
+#define wire
+
+#ifdef wire
+#include <Wire.h>
+#endif
+
 // servo
 #include <Servo.h>
 Servo myservo;
@@ -24,26 +34,20 @@ int brightness = 0;
 int fadeAmount = 2;
 int maxBrightness = 255;
 
+#ifndef wire
 // Relays
 int RELAY4 = 12;
 int RELAY3 = 7;
 int RELAY2 = 10;
 int RELAY1 = 8;
-int relayPause = 500;
+int relayPause = 2000;
+#endif
 
 // Are we debugging? Dont leave it enabled
 int debugging = 0;
 
 void setup() {
-  // Turn lights via relay on
-  pinMode(RELAY1, OUTPUT);
-  pinMode(RELAY2, OUTPUT);
-  pinMode(RELAY3, OUTPUT);
-  pinMode(RELAY4, OUTPUT);
-  digitalWrite(RELAY1, LOW);
-  digitalWrite(RELAY2, LOW);
-  digitalWrite(RELAY3, LOW);
-  digitalWrite(RELAY4, LOW);
+  turnLights(LOW);
   
   // PIR
   pinMode(PIR1, INPUT);
@@ -88,31 +92,30 @@ void moveEyeDown() {
     myservo.detach();
 
     eyeState = LOW;
+}
 
-    delay(10*1000);
-
-    // Turn lights via relay on
-    digitalWrite(RELAY1, LOW);
+void turnLights(int value) {
+    // Turn lights via relay on/off
+    #ifdef wire
+    Wire.beginTransmission(8); // transmit to device #8
+    if (value) {
+      Wire.write('+');
+    } else {
+      Wire.write('-');
+    }
+    Wire.endTransmission();
+    #else
+    digitalWrite(RELAY1, value);
     delay(relayPause);
-    digitalWrite(RELAY2, LOW);
+    digitalWrite(RELAY2, value);
     delay(relayPause);
-    digitalWrite(RELAY3, LOW);
+    digitalWrite(RELAY3, value);
     delay(relayPause);
-    digitalWrite(RELAY4, LOW);
+    digitalWrite(RELAY4, value);
+    #endif
 }
 
 void moveEyeUp() {
-    // Turn lights via relay off
-    digitalWrite(RELAY1, HIGH);
-    delay(relayPause);
-    digitalWrite(RELAY2, HIGH);
-    delay(relayPause);
-    digitalWrite(RELAY3, HIGH);
-    delay(relayPause);
-    digitalWrite(RELAY4, HIGH);
-
-    delay(5*1000);
-
     myservo.attach(servoPin);
   
     for (pos = maxServoDegrees; pos >= minServoDegrees; pos -= 1) { 
@@ -188,6 +191,7 @@ void loop() {
       sprintf(buf, "%d seconds since last finish", secondsSince);
       debug(buf);
       debug("Starting");
+      turnLights(HIGH);
       moveEyeUp();
       fadeLedIn();
     }
@@ -200,6 +204,8 @@ void loop() {
       debug("Stopping");
       fadeLedOut();
       moveEyeDown();
+      turnLights(LOW);
+
       finishedAt = millis();
       char buf[100];
       sprintf(buf, "finished at %lu", finishedAt);
