@@ -14,37 +14,37 @@
 Servo myservo;
 int pos = 0;
 int servoPin = 9;
-int maxServoDegrees = 180;
-int minServoDegrees = 0;
-int stepBack = 0;
+const int maxServoDegrees = 180;
+const int minServoDegrees = 0;
+const int stepBack = 0;
 
 // PIR 
-int PIR1 = 2;
-int PIR2 = 4;
+const int PIR1 = 2;
+const int PIR2 = 4;
 int eyeState = LOW;
 unsigned long lastMotionAt = 0;
 unsigned long finishedAt = 0;
 
 // LED
-int led1 = 6;
-int led2 = 5;
-int led3 = 3;
-int led4 = 11;
+const int led1 = 6;
+const int led2 = 5;
+const int led3 = 3;
+const int led4 = 11;
 int brightness = 0;
-int fadeAmount = 2;
-int maxBrightness = 255;
+const int fadeAmount = 2;
+const int maxBrightness = 255;
 
 #ifndef wire
 // Relays
-int RELAY4 = 12;
-int RELAY3 = 7;
-int RELAY2 = 10;
-int RELAY1 = 8;
-int relayPause = 2000;
+const int RELAY4 = 12;
+const int RELAY3 = 7;
+const int RELAY2 = 10;
+const int RELAY1 = 8;
+const int relayPause = 2000;
 #endif
 
 // Are we debugging? Dont leave it enabled
-int debugging = 0;
+const int debugging = 0;
 
 void setup() {
   turnLights(LOW);
