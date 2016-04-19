@@ -3,6 +3,8 @@
 // 
 // https://www.arduino.cc/en/Tutorial/MasterWriter
 
+#undef wire
+
 #ifdef wire
 #include <Wire.h>
 #endif
@@ -22,6 +24,11 @@ void setup() {
   Wire.onReceive(receiveEvent); // register event
   Serial.begin(9600);
   #endif
+
+  pinMode(RELAY1, OUTPUT);
+  pinMode(RELAY2, OUTPUT);
+  pinMode(RELAY3, OUTPUT);
+  pinMode(RELAY4, OUTPUT);
 
   turnLights(HIGH);
 }
