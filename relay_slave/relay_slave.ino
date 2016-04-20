@@ -3,7 +3,7 @@
 // 
 // https://www.arduino.cc/en/Tutorial/MasterWriter
 
-#undef wire
+#define wire
 
 #ifdef wire
 #include <Wire.h>
@@ -65,13 +65,12 @@ void loop() {
 void receiveEvent(int howMany) {
   while (1 < Wire.available()) {  // loop through all but the last
     char c = Wire.read();         // receive byte as a character
-    Serial.print(c);              // print the character
+    Serial.println(c);              // print the character
     if ('-' == c) {
       turnLights(LOW);
     } else if ('+' == c) {
       turnLights(HIGH);
     }
   }
-  Serial.println(x);              // print the integer
 }
 #endif
