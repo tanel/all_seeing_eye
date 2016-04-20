@@ -4,6 +4,7 @@
 // https://www.arduino.cc/en/Tutorial/MasterWriter
 
 #define wire
+#define wiretest
 
 #ifdef wire
 #include <Wire.h>
@@ -168,6 +169,14 @@ void fadeLedOut() {
 
 void loop() {
   delay(100);
+
+  #ifdef wiretest
+  turnLights(LOW);
+  delay(5000);
+  turnLights(HIGH);
+  delay(5000);
+  return;
+  #endif
 
   int val1 = digitalRead(PIR1);
   int val2 = digitalRead(PIR2);

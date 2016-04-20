@@ -34,6 +34,8 @@ void setup() {
 }
 
 void turnLights(int value) {
+  Serial.println("Turn lighs change");
+
   digitalWrite(RELAY1, value);
   delay(relayPause);
   digitalWrite(RELAY2, value);
