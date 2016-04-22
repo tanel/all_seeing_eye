@@ -10,11 +10,11 @@
 #endif
 
 // Relays
-int RELAY4 = 12;
-int RELAY3 = 7;
-int RELAY2 = 10;
-int RELAY1 = 8;
-int relayPause = 2000;
+const int RELAY4 = 12;
+const int RELAY3 = 7;
+const int RELAY2 = 10;
+const int RELAY1 = 8;
+const int relayPause = 2000;
 int relayState = HIGH;
 
 // Are we debugging? Dont leave it enabled
