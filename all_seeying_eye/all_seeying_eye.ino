@@ -3,12 +3,9 @@
 // 
 // https://www.arduino.cc/en/Tutorial/MasterWriter
 
-#define wire
 #define wiretest
 
-#ifdef wire
 #include <Wire.h>
-#endif
 
 // servo
 #include <Servo.h>
@@ -35,15 +32,6 @@ int brightness = 0;
 const int fadeAmount = 2;
 const int maxBrightness = 255;
 
-#ifndef wire
-// Relays
-const int RELAY4 = 12;
-const int RELAY3 = 7;
-const int RELAY2 = 10;
-const int RELAY1 = 8;
-const int relayPause = 2000;
-#endif
-
 // Are we debugging? Dont leave it enabled
 const int debugging = 1;
 
@@ -52,9 +40,7 @@ void setup() {
     Serial.begin(9600);
   }
 
-#ifdef wire
   Wire.begin();
-#endif
 
   // PIR
   pinMode(PIR1, INPUT);
@@ -109,7 +95,6 @@ void turnLights(int value) {
     }
 
     // Turn lights via relay on/off
-    #ifdef wire
     Wire.beginTransmission(8); // transmit to device #8
     byte written = 0;
     if (value) {
@@ -143,15 +128,6 @@ void turnLights(int value) {
       default:
         debug("unknown error");
     }
-    #else
-    digitalWrite(RELAY1, value);
-    delay(relayPause);
-    digitalWrite(RELAY2, value);
-    delay(relayPause);
-    digitalWrite(RELAY3, value);
-    delay(relayPause);
-    digitalWrite(RELAY4, value);
-    #endif
 
     if (value) {
       debug("turned lights on");
