@@ -20,10 +20,11 @@ int relayState = HIGH;
 // Are we debugging? Dont leave it enabled
 void setup() {
   #ifdef wire
-  Wire.begin(8);                // join i2c bus with address #8
+  Wire.begin(8);                // join i2c bus with address x
   Wire.onReceive(receiveEvent); // register event
-  Serial.begin(9600);
   #endif
+
+  Serial.begin(9600);
 
   pinMode(RELAY1, OUTPUT);
   pinMode(RELAY2, OUTPUT);
@@ -34,7 +35,7 @@ void setup() {
 }
 
 void turnLights(int value) {
-  Serial.println("Turn lighs change");
+  Serial.println("Turn lights change");
 
   digitalWrite(RELAY1, value);
   delay(relayPause);
@@ -44,6 +45,8 @@ void turnLights(int value) {
   delay(relayPause);
   digitalWrite(RELAY4, value);
   delay(relayPause);
+
+  Serial.println("Turn lights changed");
 
   relayState = value;
 }
@@ -65,8 +68,10 @@ void loop() {
 // function that executes whenever data is received from master
 // this function is registered as an event, see setup()
 void receiveEvent(int howMany) {
-  while (1 < Wire.available()) {  // loop through all but the last
+  Serial.println("receiveEvent");
+  while (Wire.available() > 0) {  // loop through all but the last
     char c = Wire.read();         // receive byte as a character
+    Serial.println("Received from wire: ");
     Serial.println(c);              // print the character
     if ('-' == c) {
       turnLights(LOW);

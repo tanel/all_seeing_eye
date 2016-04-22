@@ -45,11 +45,17 @@ const int relayPause = 2000;
 #endif
 
 // Are we debugging? Dont leave it enabled
-const int debugging = 0;
+const int debugging = 1;
 
 void setup() {
-  turnLights(LOW);
-  
+  if (debugging) {
+    Serial.begin(9600);
+  }
+
+#ifdef wire
+  Wire.begin();
+#endif
+
   // PIR
   pinMode(PIR1, INPUT);
   pinMode(PIR2, INPUT);
@@ -60,10 +66,6 @@ void setup() {
   pinMode(led3, OUTPUT);
   pinMode(led4, OUTPUT);
 
-  if (debugging) {
-    Serial.begin(9600);
-  }
-
   // Set up servo
   myservo.attach(servoPin);
   myservo.write(maxServoDegrees);
@@ -71,6 +73,10 @@ void setup() {
   myservo.write(maxServoDegrees - stepBack);
   delay(300);
   myservo.detach();
+
+  Serial.println("Setup done");
+
+  turnLights(LOW);
 }
 
 void debug(String text) { 
@@ -96,15 +102,47 @@ void moveEyeDown() {
 }
 
 void turnLights(int value) {
+    if (value) {
+      debug("turning lights on");
+    } else {
+      debug("turning lights off");
+    }
+
     // Turn lights via relay on/off
     #ifdef wire
     Wire.beginTransmission(8); // transmit to device #8
+    byte written = 0;
     if (value) {
-      Wire.write('+');
+      written = Wire.write('+');
     } else {
-      Wire.write('-');
+      written = Wire.write('-');
     }
-    Wire.endTransmission();
+    {
+      char buf[30];
+      sprintf(buf, "%d bytes written to wire", written);
+      debug(buf);
+    }
+    delay(100);
+    byte status = Wire.endTransmission();
+    switch (status) {
+      case 0:
+        debug("success");
+        break;
+      case 1:
+        debug("data too long to fit in transmit buffer");
+        break;
+      case 2:
+        debug("received NACK on transmit of address");
+        break;
+      case 3:
+        debug("received NACK on transmit of data");
+        break;
+      case 4:
+        debug("other error");
+        break;
+      default:
+        debug("unknown error");
+    }
     #else
     digitalWrite(RELAY1, value);
     delay(relayPause);
@@ -114,6 +152,12 @@ void turnLights(int value) {
     delay(relayPause);
     digitalWrite(RELAY4, value);
     #endif
+
+    if (value) {
+      debug("turned lights on");
+    } else {
+      debug("turned lights off");
+    }
 }
 
 void moveEyeUp() {
